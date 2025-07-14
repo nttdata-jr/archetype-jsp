@@ -55,8 +55,6 @@ jobs:
                 echo "REPO_URL=$HTML_URL" >> $GITHUB_OUTPUT
               env:
                 GH_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
-            - name: Mostrar URL del nuevo repositorio
-              run: echo "Repositorio creado: ${{ steps.crear_repo.outputs.REPO_URL }}"
             #   env:
             #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             #   run: |
