@@ -45,6 +45,10 @@ jobs:
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
+                echo "Actor: ${{ github.actor }}"
+                echo "Repository Owner: ${{ github.repository_owner }}"
+                echo "Repository Name: ${{ github.event.inputs.repository_name }}"
+                gh auth status
                 echo "${GH_TOKEN}" | gh auth login --with-token
                 gh repo create ${{ github.event.inputs.repository_name }} --public --confirm
                 cd ${{ github.event.inputs.repository_name }}
