@@ -22,8 +22,10 @@ jobs:
     generate-and-push:
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout code
+              uses: actions/checkout@v4.2.2
             - name: Install Maven
-              run: sudo apt-get update && sudo apt-get install -y maven
+              run: sudo apt-get update && sudo apt-get install -y maven gh
             - name: Generate Maven Archetype
               run: |
                 mvn archetype:generate \
@@ -33,24 +35,10 @@ jobs:
                     -DarchetypeArtifactId=maven-archetype-webapp \
                     -DarchetypeVersion=1.4 \
                     -DinteractiveMode=false
-            - name: Initialize Git repository
-              run: |
-                cd ${{ github.event.inputs.repository_name }}
-                git init
-                git config user.name "GitHub Actions"
-                git config user.email "actions@github.com"
-                git add .
-                git commit -m "Initial commit from GitHub Actions"
             - name: Create GitHub repository and push code
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                echo "Actor: ${{ github.actor }}"
-                echo "Repository Owner: ${{ github.repository_owner }}"
-                echo "Repository Name: ${{ github.event.inputs.repository_name }}"
-                gh auth status
                 gh repo create ${{ github.event.inputs.repository_name }} --public --confirm
                 cd ${{ github.event.inputs.repository_name }}
                 git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.repository_name }}.git
-                git branch -M main
-                git push -u origin main
