@@ -1,0 +1,59 @@
+name: Create new project
+on:
+    workflow_dispatch:
+        inputs:
+            repository_name:
+                description: 'Nombre del repositorio a procesar'
+                required: true
+                type: string
+            port_run_id:
+                description: 'ID de la ejecucion en Port'
+                required: false
+                type: string
+            port_context:
+                description: 'Contexto proporcionado por Port'
+                required: false
+                type: string
+            blueprint_id:
+                description: 'Nombre del blueprint'
+                required: false
+                type: string
+jobs:
+    generate-and-push:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up JDK 17
+              uses: actions/setup-java@v3.14.1
+              with:
+                java-version: '17'
+                distribution: 'temurin'
+                cache: 'maven'
+            
+            - name: Install Maven
+              run: sudo apt-get update && sudo apt-get install -y maven
+              
+            - name: Generate Maven Archetype
+              run: |
+                mvn archetype:generate \
+                    -DgroupId=com.jcodepoint \
+                    -DartifactId=${{ github.event.inputs.repository_name }} \
+                    -DarchetypeGroupId=org.apache.maven.archetypes \
+                    -DarchetypeArtifactId=maven-archetype-webapp \
+                    -DarchetypeVersion=1.4 \
+                    -DinteractiveMode=false
+            - name: Initialize Git repository
+              run: |
+                cd ${{ github.event.inputs.repository_name }}
+                git init
+                git add .
+                git commit -m "Initial commit from GitHub Actions"
+            - name: Create GitHub repository and push code
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                echo "${GH_TOKEN}" | gh auth login --with-token
+                gh repo create ${{ github.event.inputs.repository_name }} --public --confirm
+                cd ${{ github.event.inputs.repository_name }}
+                git remote add origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.repository_name }}.git
+                git branch -M main
+                git push -u origin main
