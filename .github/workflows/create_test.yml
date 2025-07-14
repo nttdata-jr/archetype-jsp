@@ -44,5 +44,3 @@ jobs:
                     -f private=true)
                     URL=$(echo "$RESPONSE" | jq -r '.html_url')
                     echo "REPO_URL=$URL" >> $GITHUB_OUTPUT
-                - name: Mostrar URL del nuevo repositorio
-                    run: echo "Repositorio creado: ${{ steps.crear_repo.outputs.REPO_URL }}"
