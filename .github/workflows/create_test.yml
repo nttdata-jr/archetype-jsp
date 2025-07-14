@@ -21,26 +21,24 @@ on:
 jobs:
     generate-and-push:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            actions: write
         steps:
-            permissions:
-                contents: write
-                actions: write
-                organization: write
-            steps:
-                - name: Checkout repository
-                  uses: actions/checkout@v4.2.2
-                - name: Instalar GitHub CLI
-                  run: sudo apt-get install gh -y
-                - name: Crear nuevo
-                  env:
-                    GH_TOKEN: ${{ secrets.ORG_REPO_ACCESS }}
-                  run: |
-                    ORG=$(gh api user | jq -r '.login')
-                    REPO_NAME="nuevo-repo-$RANDOM"
-                    echo "Creando repositorio: $REPO_NAME en $ORG"
-                    RESPONSE=$(gh api orgs/$ORG/repos \
-                    -H "Accept: application/vnd.github+json" \
-                    -f name="$REPO_NAME" \
-                    -f private=true)
-                    URL=$(echo "$RESPONSE" | jq -r '.html_url')
-                    echo "REPO_URL=$URL" >> $GITHUB_OUTPUT
+            - name: Checkout repository
+              uses: actions/checkout@v4.2.2
+            - name: Instalar GitHub CLI
+              run: sudo apt-get install gh -y
+            - name: Crear nuevo
+              env:
+                GH_TOKEN: ${{ secrets.ORG_REPO_ACCESS }}
+              run: |
+                ORG=$(gh api user | jq -r '.login')
+                REPO_NAME="nuevo-repo-$RANDOM"
+                echo "Creando repositorio: $REPO_NAME en $ORG"
+                RESPONSE=$(gh api orgs/$ORG/repos \
+                -H "Accept: application/vnd.github+json" \
+                -f name="$REPO_NAME" \
+                -f private=true)
+                URL=$(echo "$RESPONSE" | jq -r '.html_url')
+                echo "REPO_URL=$URL" >> $GITHUB_OUTPUT
