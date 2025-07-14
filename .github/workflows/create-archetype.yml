@@ -25,14 +25,15 @@ jobs:
             - name: Install Maven
               run: sudo apt-get update && sudo apt-get install -y maven
             - name: Generate Maven Archetype
-              run: |
-                mvn archetype:generate \
-                    -DgroupId=com.jcodepoint \
-                    -DartifactId=${{ github.event.inputs.repository_name }} \
-                    -DarchetypeGroupId=org.apache.maven.archetypes \
-                    -DarchetypeArtifactId=maven-archetype-webapp \
-                    -DarchetypeVersion=1.4 \
-                    -DinteractiveMode=false
+              run: mkdir ${{ github.event.inputs.repository_name }}
+            #   run: |
+            #     mvn archetype:generate \
+            #         -DgroupId=com.jcodepoint \
+            #         -DartifactId=${{ github.event.inputs.repository_name }} \
+            #         -DarchetypeGroupId=org.apache.maven.archetypes \
+            #         -DarchetypeArtifactId=maven-archetype-webapp \
+            #         -DarchetypeVersion=1.4 \
+            #         -DinteractiveMode=false
             - name: Initialize Git repository
               run: |
                 cd ${{ github.event.inputs.repository_name }}
@@ -48,5 +49,5 @@ jobs:
                 gh repo create ${{ github.event.inputs.repository_name }} --public --confirm
                 cd ${{ github.event.inputs.repository_name }}
                 git remote add origin https://github.com/${{ github.repository_owner }}/${{ github.event.inputs.repository_name }}.git
-                git branch -M main
-                git push -u origin main
+                # git branch -M main
+                # git push -u origin main
