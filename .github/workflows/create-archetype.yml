@@ -37,6 +37,8 @@ jobs:
               run: |
                 cd ${{ github.event.inputs.repository_name }}
                 git init
+                git config user.name "GitHub Actions"
+                git config user.email "actions@github.com"
                 git add .
                 git commit -m "Initial commit from GitHub Actions"
             - name: Create GitHub repository and push code
