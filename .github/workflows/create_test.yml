@@ -32,10 +32,12 @@ jobs:
                 GH_TOKEN: ${{ secrets.ORG_REPO_ACCESS }}
               run: |            
                 ORG="nttdata-jr"
-                REPO_NAME="nuevo-repo-$RANDOM"
+                REPO_NAME="${{ github.event.inputs.repository_name }}"
                 RESPONSE=$(curl -s -X POST https://api.github.com/orgs/$ORG/repos \
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Accept: application/vnd.github+json" \
-                -d "{\"name\":\"$REPO_NAME\", \"private\":true}")
+                -d "{\"name\":\"$REPO_NAME\", \"private\":false}")
+                HTTP_STATUS=$(tail -n1 <<< "$RESPONSE")
+                echo "HTTP Status: $HTTP_STATUS
                 URL=$(echo "$RESPONSE" | jq -r '.html_url')
                 echo "REPO_URL=$URL" >> $GITHUB_OUTPUT
